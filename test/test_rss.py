@@ -73,8 +73,8 @@ def test_rss_endpoints():
     print("=" * 60)
 
     endpoints = [
-        ('經濟日報', 'http://127.0.0.1:5000/money/rss'),
-        ('轉角國際', 'http://127.0.0.1:5000/global/rss')
+        ('經濟日報', 'http://127.0.0.1:3322/money/rss'),
+        ('轉角國際', 'http://127.0.0.1:3322/global/rss')
     ]
 
     all_passed = True

@@ -51,4 +51,4 @@ def global_rss():
 # 主程式入口
 if __name__ == '__main__':
     # 只監聽 127.0.0.1，不接受外部連線
-    app.run(host='127.0.0.1', port=5000)
+    app.run(host='127.0.0.1', port=3322)

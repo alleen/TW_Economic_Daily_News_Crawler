@@ -43,7 +43,7 @@ def main():
     print("開始測試所有端點")
     print("="*60)
 
-    base_url = "http://127.0.0.1:5000"
+    base_url = "http://127.0.0.1:3322"
 
     tests = [
         (f"{base_url}/", "首頁", "text/html"),
