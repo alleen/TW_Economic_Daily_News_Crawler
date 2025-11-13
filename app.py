@@ -50,5 +50,5 @@ def global_rss():
 
 # 主程式入口
 if __name__ == '__main__':
-    # 只監聽 127.0.0.1，不接受外部連線
-    app.run(host='127.0.0.1', port=3322)
+    # 監聽所有網路介面，允許 Docker 容器接受外部連線
+    app.run(host='0.0.0.0', port=3322)
