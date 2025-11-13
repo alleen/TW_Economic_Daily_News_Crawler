@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  tw-news-crawler:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: tw-economic-news-crawler
+    ports:
+      - "127.0.0.1:3322:3322"
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+    network_mode: bridge

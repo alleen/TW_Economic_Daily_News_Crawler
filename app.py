@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, render_template, Response, request, abort
 from flask_cors import CORS
+import os
 
 from money_crawler import scrape_money_news, generate_money_rss
 from global_crawler import scrape_global_news, generate_global_rss
@@ -8,11 +9,15 @@ app = Flask(__name__)
 CORS(app)
 
 # 中間件：限制只接受來自 127.0.0.1 的請求
+# 注意：在 Docker 環境中，此限制已由 port mapping (127.0.0.1:3322:3322) 處理
+# 只有在非 Docker 環境下才啟用應用層級的 IP 限制
 @app.before_request
 def limit_remote_addr():
-    client_ip = request.remote_addr
-    if client_ip != '127.0.0.1':
-        abort(403)  # 拒絕非本地請求
+    # 如果不是在 Docker 環境中運行，才進行 IP 限制
+    if not os.environ.get('PYTHONUNBUFFERED'):
+        client_ip = request.remote_addr
+        if client_ip != '127.0.0.1':
+            abort(403)  # 拒絕非本地請求
 
 @app.route('/')
 def index():
@@ -50,5 +55,5 @@ def global_rss():
 
 # 主程式入口
 if __name__ == '__main__':
-    # 只監聽 127.0.0.1，不接受外部連線
-    app.run(host='127.0.0.1', port=3322)
+    # 監聽所有網路介面，允許 Docker 容器接受外部連線
+    app.run(host='0.0.0.0', port=3322)
