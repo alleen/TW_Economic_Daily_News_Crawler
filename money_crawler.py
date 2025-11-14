@@ -52,6 +52,13 @@ def scrape_money_news():
                 paragraphs = content_tag.find_all('p') if content_tag else []
                 content = '\n'.join(p.get_text(strip=True) for p in paragraphs)
 
+                # 過濾：如果任何必要欄位為空或 'N/A'，則跳過此新聞
+                if not (title and title != 'N/A' and
+                        publish_time and publish_time != 'N/A' and
+                        reporter and reporter != 'N/A' and
+                        content and content.strip()):
+                    continue
+
                 # 將爬取到的內容存入字典
                 news_item = {
                     'title': title,
@@ -92,27 +99,38 @@ def generate_money_rss(news_data):
 
     # 添加每則新聞為 item
     for news in news_data:
+        # 過濾：確保所有必要欄位都有效
+        title = news.get('title', '')
+        publish_time = news.get('publish_time', '')
+        reporter = news.get('reporter', '')
+        content = news.get('content', '')
+        
+        if not (title and title != 'N/A' and
+                publish_time and publish_time != 'N/A' and
+                reporter and reporter != 'N/A' and
+                content and content.strip()):
+            continue
+        
         item = ET.SubElement(channel, 'item')
 
         item_title = ET.SubElement(item, 'title')
-        item_title.text = news.get('title', 'N/A')
+        item_title.text = title
 
         item_link = ET.SubElement(item, 'link')
         item_link.text = news.get('url', '')
 
         item_description = ET.SubElement(item, 'description')
         # 組合報導者和內文
-        desc_text = f"<p><strong>報導者：</strong>{news.get('reporter', 'N/A')}</p>"
-        desc_text += f"<p>{news.get('content', '')}</p>"
+        desc_text = f"<p><strong>報導者：</strong>{reporter}</p>"
+        desc_text += f"<p>{content}</p>"
         item_description.text = desc_text
 
         item_pub_date = ET.SubElement(item, 'pubDate')
         # 嘗試解析發布時間並轉換為 RFC 822 格式
         try:
-            pub_time = news.get('publish_time', '')
             # 如果有發布時間，使用它；否則使用當前時間
-            if pub_time and pub_time != 'N/A':
-                item_pub_date.text = pub_time
+            if publish_time and publish_time != 'N/A':
+                item_pub_date.text = publish_time
             else:
                 item_pub_date.text = formatdate(timeval=None, localtime=False, usegmt=True)
         except:
